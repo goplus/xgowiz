@@ -15,17 +15,23 @@ type Client struct {
 	baseURL string
 }
 
-func NewClient(apiKey string, baseURL string) *Client {
+func NewClient(apiKey string, baseURL string, client *http.Client) *Client {
+	return new(Client).Init(apiKey, baseURL, client)
+}
+
+func (c *Client) Init(apiKey string, baseURL string, client *http.Client) *Client {
 	if baseURL == "" {
 		baseURL = "https://api.anthropic.com/v1"
 	} else if !strings.HasSuffix(baseURL, "/v1") {
 		baseURL = strings.TrimSuffix(baseURL, "/") + "/v1"
 	}
-	return &Client{
-		apiKey:  apiKey,
-		baseURL: baseURL,
-		client:  &http.Client{},
+	if client == nil {
+		client = http.DefaultClient
 	}
+	c.apiKey = apiKey
+	c.baseURL = baseURL
+	c.client = client
+	return c
 }
 
 func (c *Client) CreateMessage(ctx context.Context, req CreateRequest) (*APIMessage, error) {
@@ -34,7 +40,8 @@ func (c *Client) CreateMessage(ctx context.Context, req CreateRequest) (*APIMess
 		return nil, fmt.Errorf("error marshaling request: %w", err)
 	}
 
-	httpReq, err := http.NewRequestWithContext(ctx, "POST", fmt.Sprintf("%s/messages", c.baseURL), bytes.NewReader(body))
+	url := c.baseURL + "/messages"
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewReader(body))
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %w", err)
 	}

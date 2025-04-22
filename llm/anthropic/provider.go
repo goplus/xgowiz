@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"reflect"
 	"strings"
 
@@ -12,31 +13,27 @@ import (
 	"github.com/qiniu/x/log"
 )
 
-type Provider struct {
-	client *Client
-	model  string
-}
-
 var (
 	_ llm.Provider = (*Provider)(nil)
 )
 
-func NewProvider(apiKey string, baseURL string, model string) *Provider {
-	if model == "" {
-		model = "claude-3-5-sonnet-20240620" // 默认模型
-	}
-	return &Provider{
-		client: NewClient(apiKey, baseURL),
-		model:  model,
-	}
+type Provider struct {
+	client Client
+	model  string
 }
 
-func (p *Provider) CreateMessage(
-	ctx context.Context,
-	prompt string,
-	messages []llm.Message,
-	tools []llm.Tool,
-) (llm.Message, error) {
+func NewProvider(apiKey string, baseURL string, client *http.Client, model string) *Provider {
+	if model == "" {
+		model = "claude-3-5-sonnet-20240620"
+	}
+	ret := &Provider{
+		model: model,
+	}
+	ret.client.Init(apiKey, baseURL, client)
+	return ret
+}
+
+func (p *Provider) CreateMessage(ctx context.Context, prompt string, messages []llm.Message, tools []llm.Tool) (llm.Message, error) {
 	log.Debug("creating message",
 		"prompt", prompt,
 		"num_messages", len(messages),
@@ -156,10 +153,7 @@ func (p *Provider) Name() string {
 	return "anthropic"
 }
 
-func (p *Provider) CreateToolResponse(
-	toolCallID string,
-	content any,
-) (llm.Message, error) {
+func (p *Provider) CreateToolResponse(toolCallID string, content any) (llm.Message, error) {
 	log.Debug("creating tool response",
 		"tool_call_id", toolCallID,
 		"content_type", reflect.TypeOf(content),
