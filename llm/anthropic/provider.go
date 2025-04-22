@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/goplus/xgowiz/llm"
@@ -15,6 +16,10 @@ type Provider struct {
 	client *Client
 	model  string
 }
+
+var (
+	_ llm.Provider = (*Provider)(nil)
+)
 
 func NewProvider(apiKey string, baseURL string, model string) *Provider {
 	if model == "" {
@@ -157,11 +162,11 @@ func (p *Provider) CreateToolResponse(
 ) (llm.Message, error) {
 	log.Debug("creating tool response",
 		"tool_call_id", toolCallID,
-		"content_type", fmt.Sprintf("%T", content),
+		"content_type", reflect.TypeOf(content),
 		"content", content)
 
 	var contentStr string
-	var structuredContent interface{} = content
+	var structuredContent any = content
 
 	// Convert content to string if needed
 	switch v := content.(type) {

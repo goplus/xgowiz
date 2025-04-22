@@ -86,5 +86,5 @@ type ContentBlock struct {
 	ToolUseID string          `json:"tool_use_id,omitempty"`
 	Name      string          `json:"name,omitempty"`
 	Input     json.RawMessage `json:"input,omitempty"`
-	Content   interface{}     `json:"content,omitempty"`
+	Content   any             `json:"content,omitempty"`
 }
