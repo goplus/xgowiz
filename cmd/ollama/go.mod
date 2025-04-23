@@ -1,4 +1,4 @@
-module github.com/goplus/xgowiz/cmd/google
+module github.com/goplus/xgowiz/cmd/ollama
 
 go 1.24.0
 
