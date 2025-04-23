@@ -58,8 +58,8 @@ type Schema struct {
 
 // Provider defines the interface for LLM providers.
 type Provider interface {
-	// CreateMessage sends a message to the LLM and returns the response.
-	CreateMessage(ctx context.Context, prompt string, messages []Message, tools []Tool) (Message, error)
+	// SendMessage sends a message to the LLM and returns the response.
+	SendMessage(ctx context.Context, prompt string, messages []Message, tools []Tool) (Message, error)
 
 	// CreateToolResponse creates a message representing a tool response.
 	CreateToolResponse(toolCallID string, content any) (Message, error)

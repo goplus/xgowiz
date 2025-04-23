@@ -33,7 +33,7 @@ func NewProvider(apiKey string, baseURL string, client *http.Client, model strin
 	return ret
 }
 
-func (p *Provider) CreateMessage(ctx context.Context, prompt string, messages []llm.Message, tools []llm.Tool) (llm.Message, error) {
+func (p *Provider) SendMessage(ctx context.Context, prompt string, messages []llm.Message, tools []llm.Tool) (llm.Message, error) {
 	log.Debug("creating message",
 		"prompt", prompt,
 		"num_messages", len(messages),
@@ -132,7 +132,7 @@ func (p *Provider) CreateMessage(ctx context.Context, prompt string, messages []
 		"num_tools", len(tools))
 
 	// Make the API call
-	resp, err := p.client.CreateMessage(ctx, CreateRequest{
+	resp, err := p.client.SendMessage(ctx, CreateRequest{
 		Model:     p.model,
 		Messages:  anthropicMessages,
 		MaxTokens: 4096,
@@ -162,6 +162,7 @@ func (p *Provider) CreateToolResponse(toolCallID string, content any) (llm.Messa
 	var contentStr string
 	var structuredContent any = content
 
+	// TODO(xsw): check contentStr
 	// Convert content to string if needed
 	switch v := content.(type) {
 	case string:

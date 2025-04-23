@@ -34,7 +34,7 @@ func (c *Client) Init(apiKey string, baseURL string, client *http.Client) *Clien
 	return c
 }
 
-func (c *Client) CreateMessage(ctx context.Context, req CreateRequest) (*APIMessage, error) {
+func (c *Client) SendMessage(ctx context.Context, req CreateRequest) (*APIMessage, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling request: %w", err)
