@@ -13,6 +13,10 @@ import (
 	"github.com/qiniu/x/log"
 )
 
+var (
+	_ llm.Provider = (*Provider)(nil)
+)
+
 type Provider struct {
 	client Client
 	model  string
@@ -40,7 +44,7 @@ func NewProvider(apiKey string, baseURL string, client *http.Client, model strin
 	return ret
 }
 
-func (p *Provider) CreateMessage(ctx context.Context, prompt string, messages []llm.Message, tools []llm.Tool) (llm.Message, error) {
+func (p *Provider) SendMessage(ctx context.Context, prompt string, messages []llm.Message, tools []llm.Tool) (llm.Message, error) {
 	log.Debug("creating message",
 		"prompt", prompt,
 		"num_messages", len(messages),
