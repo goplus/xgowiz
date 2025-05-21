@@ -1,2 +1,3 @@
 # xgowiz
-xGoWiz is your intelligent companion for xGo programming, designed to streamline your development workflow and enhance productivity. 
+
+XGoWiz is your intelligent companion for XGo programming, designed to streamline your development workflow and enhance productivity. 
